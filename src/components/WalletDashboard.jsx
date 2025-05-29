@@ -5,7 +5,6 @@ import QRCode from 'react-qr-code';
 import TokensTab from './TokensTab';
 import TransactionsTab from './TransactionsTab';
 import WalletsTab from './WalletsTab';
-import ContractInteractionTab from './ContractInteractionTab';
 import TokenCreatorTab from './TokenCreatorTab';
 
 const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
@@ -151,12 +150,6 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
           Транзакції
         </button>
         <button
-          className={`py-2 px-3 text-sm font-medium whitespace-nowrap ${activeTab === 'contracts' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-gray-400'}`}
-          onClick={() => setActiveTab('contracts')}
-        >
-          Контракти
-        </button>
-        <button
           className={`py-2 px-3 text-sm font-medium whitespace-nowrap ${activeTab === 'create-token' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-gray-400'}`}
           onClick={() => setActiveTab('create-token')}
         >
@@ -297,21 +290,6 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
             </button>
           </div>
           <TransactionsTab address={wallet.address} />
-        </div>
-      )}
-
-      {/* Вкладка "Контракти" */}
-      {activeTab === 'contracts' && (
-        <div>
-          <div className="flex items-center mb-4">
-            <button 
-              className="text-blue-400 hover:text-blue-300 flex items-center"
-              onClick={() => setActiveTab('wallet')}
-            >
-              ← <span className="ml-1">Назад</span>
-            </button>
-          </div>
-          <ContractInteractionTab wallet={wallet} />
         </div>
       )}
 

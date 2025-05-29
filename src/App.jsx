@@ -40,8 +40,17 @@ function App() {
     setPage('addWallet');
   };
 
+  // Функція для створення нового гаманця з екрану логіну
+  const handleCreateNewFromLogin = () => {
+    setPage('createNew');
+  };
+
   const handleBackToDashboard = () => {
     setPage('dashboard');
+  };
+
+  const handleBackToLogin = () => {
+    setPage('login');
   };
 
   // Визначаємо, чи показувати підзаголовок "тестова мережа"
@@ -63,8 +72,11 @@ function App() {
       </div>
       
       {page === 'create' && <WalletCreate onWalletCreated={handleWalletCreated} isNewPassword={true} />}
-      {page === 'login' && <WalletLogin onLogin={handleLogin} onCreateNew={handleCreateNewWallet} />}
+      
+      {page === 'login' && <WalletLogin onLogin={handleLogin} onCreateNew={handleCreateNewFromLogin} />}
+      
       {page === 'dashboard' && passwordVerified && <WalletDashboard password={password} onLogout={handleLogout} onCreateNewWallet={handleCreateNewWallet} />}
+      
       {page === 'addWallet' && passwordVerified && (
         <div>
           <div className="flex justify-between items-center mb-4">
@@ -80,6 +92,24 @@ function App() {
             onWalletCreated={handleBackToDashboard} 
             password={password}
             isNewPassword={false} 
+          />
+        </div>
+      )}
+
+      {page === 'createNew' && (
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <button 
+              className="text-blue-400 hover:text-blue-300"
+              onClick={handleBackToLogin}
+            >
+              ← Назад до входу
+            </button>
+            <h2 className="text-lg font-bold">Новий гаманець</h2>
+          </div>
+          <WalletCreate 
+            onWalletCreated={handleWalletCreated} 
+            isNewPassword={true} 
           />
         </div>
       )}

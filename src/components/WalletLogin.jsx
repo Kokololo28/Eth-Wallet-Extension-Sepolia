@@ -19,6 +19,12 @@ const WalletLogin = ({ onLogin, onCreateNew }) => {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Вхід до гаманця</h2>
@@ -32,6 +38,7 @@ const WalletLogin = ({ onLogin, onCreateNew }) => {
           className="w-full bg-gray-700 border border-gray-600 rounded p-2"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Введіть пароль"
         />
       </div>
