@@ -5,7 +5,12 @@
   "description": "Криптогаманець для взаємодії з тестовою мережею Ethereum",
   "action": {
     "default_popup": "index.html",
-    "default_title": "Ethereum Wallet"
+    "default_title": "Ethereum Wallet",
+    "default_icon": {
+      "16": "src/assets/icon16.png",
+      "48": "src/assets/icon48.png",
+      "128": "src/assets/icon128.png"
+    }
   },
   "permissions": [
     "storage"
@@ -14,5 +19,8 @@
     "16": "src/assets/icon16.png",
     "48": "src/assets/icon48.png",
     "128": "src/assets/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
 }

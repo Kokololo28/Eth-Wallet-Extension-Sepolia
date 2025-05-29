@@ -170,17 +170,19 @@ const TokenCreatorTab = ({ wallet }) => {
             </button>
           </div>
           
-          {/* Вікно з кодом - ОКРЕМИЙ КОМПОНЕНТ */}
+          {/* Вікно з кодом - з фіксованою висотою та прокруткою */}
           <div className="mb-4">
             <h3 className="text-md font-medium mb-2">Згенерований код контракту:</h3>
-            <div className="bg-gray-800 p-3 rounded border border-gray-700">
-              <pre className="text-xs overflow-y-auto" style={{ maxHeight: '250px', whiteSpace: 'pre-wrap' }}>
-                {generatedCode}
-              </pre>
+            <div className="bg-gray-800 rounded border border-gray-700">
+              <div className="h-48 overflow-y-auto p-3">
+                <pre className="text-xs whitespace-pre-wrap">
+                  {generatedCode}
+                </pre>
+              </div>
             </div>
           </div>
           
-          {/* ОКРЕМИЙ БЛОК для кнопок */}
+          {/* Блок для кнопок */}
           <div className="mb-4">
             <h3 className="text-md font-medium mb-2">Наступні кроки:</h3>
             <div className="bg-yellow-800 p-3 rounded border border-yellow-700">
@@ -196,20 +198,22 @@ const TokenCreatorTab = ({ wallet }) => {
             </div>
           </div>
           
-          {/* Додаткові інструкції */}
-          <div className="mt-4 bg-gray-800 p-3 rounded">
+          {/* Додаткові інструкції - згорнуті за замовчуванням */}
+          <div className="bg-gray-800 p-3 rounded">
             <details>
               <summary className="cursor-pointer font-medium mb-2">Покрокові інструкції з розгортання</summary>
-              <ol className="list-decimal ml-5 space-y-1 text-sm text-gray-300">
-                <li>Скопіюйте код контракту вище</li>
-                <li>Відкрийте Remix IDE (кнопка вище)</li>
-                <li>Створіть новий файл з розширенням .sol</li>
-                <li>Вставте скопійований код</li>
-                <li>Перейдіть на вкладку "Compile" та натисніть кнопку "Compile"</li>
-                <li>Після успішної компіляції перейдіть на вкладку "Deploy"</li>
-                <li>Виберіть "Injected Web3" та підключіть MetaMask до мережі Sepolia</li>
-                <li>Натисніть "Deploy" та підтвердіть транзакцію</li>
-              </ol>
+              <div className="mt-3">
+                <ol className="list-decimal ml-5 space-y-2 text-sm text-gray-300">
+                  <li>Скопіюйте код контракту вище</li>
+                  <li>Відкрийте Remix IDE (кнопка вище)</li>
+                  <li>Створіть новий файл з розширенням .sol</li>
+                  <li>Вставте скопійований код</li>
+                  <li>Перейдіть на вкладку "Compile" та натисніть кнопку "Compile"</li>
+                  <li>Після успішної компіляції перейдіть на вкладку "Deploy"</li>
+                  <li>Виберіть "Injected Web3" та підключіть MetaMask до мережі Sepolia</li>
+                  <li>Натисніть "Deploy" та підтвердіть транзакцію</li>
+                </ol>
+              </div>
             </details>
           </div>
         </>
