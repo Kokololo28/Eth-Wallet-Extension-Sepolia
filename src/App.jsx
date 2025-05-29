@@ -19,7 +19,10 @@ function App() {
     }
   }, []);
 
-  const handleWalletCreated = () => {
+  const handleWalletCreated = (newPassword = null) => {
+    if (newPassword) {
+      setPassword(newPassword);
+    }
     setPage('dashboard');
     setPasswordVerified(true);
   };

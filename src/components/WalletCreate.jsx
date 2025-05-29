@@ -60,7 +60,8 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
     try {
       const actualPassword = isNewPassword ? newPassword : password;
       saveWallet(newWallet, actualPassword);
-      onWalletCreated();
+      // Передаємо пароль назад до батьківського компонента
+      onWalletCreated(isNewPassword ? newPassword : password);
     } catch (error) {
       setError('Помилка збереження гаманця: ' + error.message);
     }
@@ -98,7 +99,8 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
       
       const actualPassword = isNewPassword ? newPassword : password;
       saveWallet(wallet, actualPassword);
-      onWalletCreated();
+      // Передаємо пароль назад до батьківського компонента
+      onWalletCreated(isNewPassword ? newPassword : password);
     } catch (error) {
       setError('Помилка імпорту гаманця: ' + error.message);
     }
