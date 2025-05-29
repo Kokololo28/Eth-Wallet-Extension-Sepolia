@@ -59,7 +59,7 @@ export const getBalance = async (address) => {
   }
 };
 
-// ===== НОВИЙ КОД ПОЧИНАЄТЬСЯ ТУТ =====
+// ===== ВИПРАВЛЕНИЙ КОД ПОЧИНАЄТЬСЯ ТУТ =====
 
 // Стандартний ABI для ERC-20 токенів
 const ERC20_ABI = [
@@ -111,76 +111,174 @@ const COMMON_TOKENS = {
   ]
 };
 
-// Отримати баланс конкретного токена
+// ВИПРАВЛЕНА функція для отримання балансу токена
 export const getTokenBalance = async (tokenAddress, ownerAddress) => {
   try {
+    console.log(`Отримання балансу токена ${tokenAddress} для адреси ${ownerAddress}`);
+    
     const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-    const balance = await tokenContract.balanceOf(ownerAddress);
-    const decimals = await tokenContract.decimals();
-    return ethers.utils.formatUnits(balance, decimals);
+    
+    // Отримуємо баланс і десяткові знаки паралельно
+    const [balance, decimals] = await Promise.all([
+      tokenContract.balanceOf(ownerAddress),
+      tokenContract.decimals()
+    ]);
+    
+    console.log(`Сирий баланс: ${balance.toString()}, Десяткові знаки: ${decimals}`);
+    
+    // Перевіряємо, чи отримали валідні дані
+    if (!balance || decimals === undefined || decimals === null) {
+      console.error('Не вдалося отримати баланс або десяткові знаки');
+      return '0.0';
+    }
+    
+    // Конвертуємо BigNumber в число з правильною кількістю десяткових знаків
+    const formattedBalance = ethers.utils.formatUnits(balance, decimals);
+    console.log(`Форматований баланс: ${formattedBalance}`);
+    
+    // Перевіряємо, чи результат валідний
+    if (isNaN(parseFloat(formattedBalance))) {
+      console.error('Форматований баланс не є числом:', formattedBalance);
+      return '0.0';
+    }
+    
+    return formattedBalance;
   } catch (error) {
     console.error('Помилка отримання балансу токена:', error);
-    return '0.0';
+    
+    // Спробуємо отримати баланс з 18 десятковими знаками за замовчуванням
+    try {
+      const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+      const balance = await tokenContract.balanceOf(ownerAddress);
+      const formattedBalance = ethers.utils.formatEther(balance); // 18 десяткових знаків
+      console.log(`Резервний баланс (18 знаків): ${formattedBalance}`);
+      return formattedBalance;
+    } catch (fallbackError) {
+      console.error('Резервний спосіб також не спрацював:', fallbackError);
+      return '0.0';
+    }
   }
 };
 
-// Отримати інформацію про всі токени для адреси
+// ВИПРАВЛЕНА функція для отримання інформації про всі токени
 export const getAllTokensForAddress = async (address) => {
-  const networkName = NETWORK; // Використовуємо поточну мережу (sepolia або goerli)
+  const networkName = NETWORK;
   const tokens = COMMON_TOKENS[networkName] || [];
   
-  const tokensWithBalance = await Promise.all(
-    tokens.map(async (token) => {
-      const balance = await getTokenBalance(token.address, address);
-      return {
-        ...token,
-        balance
-      };
+  console.log(`Отримання токенів для адреси: ${address}`);
+  console.log(`Перевіряємо ${tokens.length} популярних токенів`);
+  
+  // Отримуємо збережені кастомні токени
+  const savedTokens = getCustomTokens();
+  console.log(`Знайдено ${savedTokens.length} кастомних токенів`);
+  
+  const allTokensToCheck = [...tokens, ...savedTokens];
+  
+  const tokensWithBalance = await Promise.allSettled(
+    allTokensToCheck.map(async (token) => {
+      try {
+        const balance = await getTokenBalance(token.address, address);
+        return {
+          ...token,
+          balance: balance || '0.0'
+        };
+      } catch (error) {
+        console.error(`Помилка для токена ${token.symbol}:`, error);
+        return {
+          ...token,
+          balance: '0.0'
+        };
+      }
     })
   );
   
-  // Повертаємо тільки токени з ненульовим балансом + додаткові токени з localStorage
-  const savedTokens = getCustomTokens();
-  const allTokens = [...tokensWithBalance, ...savedTokens];
+  // Обробляємо результати Promise.allSettled
+  const validTokens = tokensWithBalance
+    .filter(result => result.status === 'fulfilled')
+    .map(result => result.value)
+    .filter(token => {
+      // Фільтруємо токени з ненульовим балансом або показуємо всі для тестування
+      const hasBalance = parseFloat(token.balance) > 0;
+      if (hasBalance) {
+        console.log(`Токен ${token.symbol}: ${token.balance}`);
+      }
+      return true; // Показуємо всі токени для діагностики
+    });
   
   // Видаляємо дублікати за адресою
-  const uniqueTokens = allTokens.filter((token, index, self) =>
-    index === self.findIndex((t) => t.address === token.address)
+  const uniqueTokens = validTokens.filter((token, index, self) =>
+    index === self.findIndex((t) => t.address.toLowerCase() === token.address.toLowerCase())
   );
   
+  console.log(`Повертаємо ${uniqueTokens.length} унікальних токенів`);
   return uniqueTokens;
 };
 
 // Збереження кастомних токенів
 export const saveCustomToken = (token) => {
   const tokens = getCustomTokens();
-  tokens.push(token);
+  
+  // Перевіряємо, чи токен уже існує
+  const existingIndex = tokens.findIndex(t => 
+    t.address.toLowerCase() === token.address.toLowerCase()
+  );
+  
+  if (existingIndex >= 0) {
+    // Оновлюємо існуючий токен
+    tokens[existingIndex] = { ...tokens[existingIndex], ...token };
+  } else {
+    // Додаємо новий токен
+    tokens.push(token);
+  }
+  
   localStorage.setItem('custom_tokens', JSON.stringify(tokens));
+  console.log('Кастомний токен збережено:', token);
 };
 
 // Отримання кастомних токенів
 export const getCustomTokens = () => {
-  const tokens = localStorage.getItem('custom_tokens');
-  return tokens ? JSON.parse(tokens) : [];
+  try {
+    const tokens = localStorage.getItem('custom_tokens');
+    return tokens ? JSON.parse(tokens) : [];
+  } catch (error) {
+    console.error('Помилка завантаження кастомних токенів:', error);
+    return [];
+  }
 };
 
-// Отримання інформації про токен за адресою
+// ВИПРАВЛЕНА функція для отримання інформації про токен
 export const getTokenInfo = async (tokenAddress) => {
   try {
-    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-    const symbol = await tokenContract.symbol();
-    const name = await tokenContract.name();
-    const decimals = await tokenContract.decimals();
+    console.log(`Отримання інформації про токен: ${tokenAddress}`);
     
-    return {
+    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+    
+    // Отримуємо всю інформацію паралельно
+    const [symbol, name, decimals] = await Promise.all([
+      tokenContract.symbol(),
+      tokenContract.name(),
+      tokenContract.decimals()
+    ]);
+    
+    const tokenInfo = {
       address: tokenAddress,
-      symbol,
-      name,
-      decimals: decimals.toString()
+      symbol: symbol || 'UNKNOWN',
+      name: name || 'Unknown Token',
+      decimals: decimals !== undefined ? decimals.toString() : '18'
     };
+    
+    console.log('Інформація про токен:', tokenInfo);
+    return tokenInfo;
   } catch (error) {
     console.error('Помилка отримання інформації про токен:', error);
-    return null;
+    
+    // Повертаємо базову інформацію
+    return {
+      address: tokenAddress,
+      symbol: 'UNKNOWN',
+      name: 'Unknown Token',
+      decimals: '18'
+    };
   }
 };
 
@@ -231,9 +329,7 @@ export const updateTransactionStatus = (hash, fromAddress, status, errorMessage 
   localStorage.setItem(`transactions_${fromAddress}`, JSON.stringify(updatedTxs));
 };
 
-// ===== ВІДРЕДАГУЙТЕ ІСНУЮЧУ ФУНКЦІЮ ВІДПРАВЛЕННЯ ТРАНЗАКЦІЇ =====
-
-// Оновимо функцію відправлення транзакції, щоб зберігати історію
+// Відправлення транзакції
 export const sendTransaction = async (privateKey, toAddress, amount) => {
   try {
     const wallet = new ethers.Wallet(privateKey, provider);

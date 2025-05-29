@@ -18,7 +18,7 @@ const TokenDetail = ({ token, onBack }) => {
       <div className="p-3 bg-gray-800 rounded border border-gray-700 mb-4">
         <div className="flex justify-between items-center mb-3">
           <div className="text-xl font-medium">{token.symbol}</div>
-          <div className="text-xl font-medium">{parseFloat(token.balance).toFixed(4)}</div>
+          <div className="text-xl font-medium">{formatTokenBalance(token.balance)}</div>
         </div>
         
         <div className="mb-2">
@@ -51,6 +51,27 @@ const TokenDetail = ({ token, onBack }) => {
   );
 };
 
+// Функція для форматування балансу токену
+const formatTokenBalance = (balance) => {
+  if (!balance || balance === null || balance === undefined) {
+    return '0.0000';
+  }
+  
+  const numBalance = parseFloat(balance);
+  
+  if (isNaN(numBalance)) {
+    console.error('Неправильний баланс токену:', balance);
+    return '0.0000';
+  }
+  
+  // Якщо баланс дуже маленький, показуємо більше знаків після коми
+  if (numBalance > 0 && numBalance < 0.0001) {
+    return numBalance.toExponential(2);
+  }
+  
+  return numBalance.toFixed(4);
+};
+
 const TokensTab = ({ address, onTokenDetailView }) => {
   const [tokens, setTokens] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,12 +93,21 @@ const TokensTab = ({ address, onTokenDetailView }) => {
   }, [selectedToken, onTokenDetailView]);
 
   const loadTokens = async () => {
+    console.log('Завантаження токенів для адреси:', address);
     setIsLoading(true);
+    setError('');
+    
     try {
       const tokensData = await getAllTokensForAddress(address);
+      console.log('Отримано токени:', tokensData);
       setTokens(tokensData);
+      
+      if (tokensData.length === 0) {
+        console.log('Токенів не знайдено');
+      }
     } catch (error) {
       console.error('Помилка завантаження токенів:', error);
+      setError('Помилка завантаження токенів: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -93,6 +123,7 @@ const TokensTab = ({ address, onTokenDetailView }) => {
     setError('');
     
     try {
+      console.log('Додавання токену:', newTokenAddress);
       const tokenInfo = await getTokenInfo(newTokenAddress);
       
       if (!tokenInfo) {
@@ -101,14 +132,18 @@ const TokensTab = ({ address, onTokenDetailView }) => {
         return;
       }
       
+      console.log('Інформація про токен отримана:', tokenInfo);
       saveCustomToken(tokenInfo);
       setSuccess(`Токен ${tokenInfo.symbol} успішно додано!`);
       setNewTokenAddress('');
       setShowAddToken(false);
       
       // Оновлюємо список токенів
-      loadTokens();
+      setTimeout(() => {
+        loadTokens();
+      }, 1000);
     } catch (error) {
+      console.error('Помилка додавання токена:', error);
       setError('Помилка додавання токена: ' + error.message);
     } finally {
       setIsLoading(false);
@@ -116,6 +151,7 @@ const TokensTab = ({ address, onTokenDetailView }) => {
   };
 
   const handleTokenClick = (token) => {
+    console.log('Вибрано токен:', token);
     setSelectedToken(token);
   };
 
@@ -168,14 +204,15 @@ const TokensTab = ({ address, onTokenDetailView }) => {
             onClick={handleAddToken}
             disabled={isLoading}
           >
-            Додати
+            {isLoading ? 'Додавання...' : 'Додати'}
           </button>
         </div>
       )}
 
       {tokens.length === 0 ? (
         <div className="text-center py-8 text-gray-400">
-          У вас ще немає токенів
+          <p>У вас ще немає токенів</p>
+          <p className="text-sm mt-2">Додайте адресу контракту вашого токену вище</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -186,7 +223,7 @@ const TokensTab = ({ address, onTokenDetailView }) => {
               onClick={() => handleTokenClick(token)}
             >
               <div className="font-medium">{token.symbol}</div>
-              <div className="font-medium">{parseFloat(token.balance).toFixed(4)}</div>
+              <div className="font-medium">{formatTokenBalance(token.balance)}</div>
             </div>
           ))}
         </div>
