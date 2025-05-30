@@ -94,7 +94,7 @@ function App() {
                 className="back-button"
                 onClick={handleBackToDashboard}
               >
-                ← Назад
+                ←
               </button>
               <h2 className="text-lg font-bold">Новий гаманець</h2>
             </div>
@@ -113,7 +113,7 @@ function App() {
                 className="back-button"
                 onClick={handleBackToLogin}
               >
-                ← Назад до входу
+                ←
               </button>
               <h2 className="text-lg font-bold">Новий гаманець</h2>
             </div>

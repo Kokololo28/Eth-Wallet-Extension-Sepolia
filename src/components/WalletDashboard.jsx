@@ -229,7 +229,7 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                   className="back-button"
                   onClick={() => setActiveTab('wallet')}
                 >
-                  ← <span>Назад</span>
+                  ←
                 </button>
               </div>
             )}
@@ -248,7 +248,7 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                 className="back-button"
                 onClick={() => setActiveTab('wallet')}
               >
-                ← <span>Назад</span>
+                ←
               </button>
             </div>
             <TransactionsTab address={wallet.address} />
@@ -263,7 +263,7 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                 className="back-button"
                 onClick={() => setActiveTab('wallet')}
               >
-                ← <span>Назад</span>
+                ←
               </button>
             </div>
             <TokenCreatorTab wallet={wallet} />
@@ -278,7 +278,7 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                 className="back-button"
                 onClick={() => setActiveTab('wallet')}
               >
-                ← <span>Назад</span>
+                ←
               </button>
             </div>
             <WalletsTab 

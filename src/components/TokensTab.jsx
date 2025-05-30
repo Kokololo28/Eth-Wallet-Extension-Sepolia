@@ -10,7 +10,7 @@ const TokenDetail = ({ token, onBack }) => {
           className="back-button"
           onClick={onBack}
         >
-          ← Назад
+          ←
         </button>
         <h2 className="text-lg font-medium ml-2">Інформація про токен</h2>
       </div>
