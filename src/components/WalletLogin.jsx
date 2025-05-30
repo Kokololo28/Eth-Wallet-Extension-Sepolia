@@ -4,6 +4,7 @@ import { loadCurrentWallet, getWalletsList, getCurrentWalletId } from '../servic
 const WalletLogin = ({ onLogin, onCreateNew }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const walletsList = getWalletsList();
 
   const handleLogin = () => {
     if (!password) {
@@ -26,36 +27,49 @@ const WalletLogin = ({ onLogin, onCreateNew }) => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Вхід до гаманця</h2>
-      
-      {error && <div className="mb-4 p-2 bg-red-500 text-white rounded">{error}</div>}
-      
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Пароль</label>
-        <input
-          type="password"
-          className="w-full bg-gray-700 border border-gray-600 rounded p-2"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Введіть пароль"
-        />
+    <div className="login-container">
+      <div className="logo-section">
+        <div className="logo-circle">
+          <span>Z</span>
+        </div>
+        <div className="text-center">
+          <p className="text-gray-400 text-base mb-2">Ласкаво просимо!</p>
+          <p className="text-gray-500 text-sm">
+            {walletsList.length} {walletsList.length === 1 ? 'гаманець' : 'гаманців'} збережено
+          </p>
+        </div>
       </div>
       
-      <button
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mb-4"
-        onClick={handleLogin}
-      >
-        Увійти
-      </button>
-      
-      <button
-        className="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded"
-        onClick={onCreateNew}
-      >
-        Створити новий гаманець
-      </button>
+      <div>
+        {error && <div className="alert alert-error">{error}</div>}
+        
+        <div className="input-group">
+          <label className="input-label">Пароль</label>
+          <input
+            type="password"
+            className="input-field"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Введіть пароль"
+            autoFocus
+          />
+        </div>
+        
+        <button
+          className="btn-primary"
+          onClick={handleLogin}
+        >
+          Увійти
+        </button>
+        
+        <button
+          className="btn-secondary"
+          onClick={onCreateNew}
+        >
+          Створити новий гаманець
+        </button>
+      </div>
     </div>
   );
 };

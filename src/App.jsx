@@ -57,23 +57,27 @@ function App() {
   };
 
   // Визначаємо, чи показувати підзаголовок "тестова мережа"
-  const showTestnetSubtitle = page !== 'login';
+  const showTestnetSubtitle = page !== 'login' || page === 'createNew';
 
   if (page === 'loading') {
     return (
       <div className="w-[360px] h-[600px] bg-slate-900 text-white flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="w-[360px] h-[600px] bg-slate-900 text-white flex flex-col">
-      {/* Фіксований заголовок */}
-      <div className="p-4 text-center flex-shrink-0 border-b border-gray-700">
-        <h1 className="text-2xl font-bold">ZeroTrace</h1>
-        {showTestnetSubtitle && <p className="text-gray-400">Тестова мережа</p>}
-      </div>
+      {/* Фіксований заголовок для екранів створення/логіну */}
+      {(page === 'create' || page === 'login' || page === 'createNew') && (
+        <div className="wallet-header">
+          <h1>ZeroTrace</h1>
+          {showTestnetSubtitle && <p>Тестова мережа</p>}
+        </div>
+      )}
       
       {/* Прокручуваний контент */}
       <div className="flex-1 overflow-y-auto min-h-0">
@@ -87,7 +91,7 @@ function App() {
           <div>
             <div className="flex justify-between items-center p-4 border-b border-gray-700">
               <button 
-                className="text-blue-400 hover:text-blue-300"
+                className="back-button"
                 onClick={handleBackToDashboard}
               >
                 ← Назад
@@ -106,7 +110,7 @@ function App() {
           <div>
             <div className="flex justify-between items-center p-4 border-b border-gray-700">
               <button 
-                className="text-blue-400 hover:text-blue-300"
+                className="back-button"
                 onClick={handleBackToLogin}
               >
                 ← Назад до входу

@@ -104,8 +104,8 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-32">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="loading-spinner">
+        <div className="spinner"></div>
       </div>
     );
   }
@@ -116,132 +116,84 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Фіксований заголовок з кнопкою виходу */}
-      <div className="flex justify-between items-center p-4 border-b border-gray-700 flex-shrink-0">
-        <h2 className="text-xl font-bold">Мій гаманець</h2>
-        <button
-          className="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm"
-          onClick={onLogout}
-        >
+      {/* Dashboard header */}
+      <div className="dashboard-header">
+        <h2>Мій гаманець</h2>
+        <button className="logout-btn" onClick={onLogout}>
           Вийти
         </button>
       </div>
 
-      {/* Область для повідомлень про помилки та успіх */}
+      {/* Область для повідомлень */}
       {(error || success) && (
         <div className="p-4 flex-shrink-0">
-          {error && <div className="mb-2 p-2 bg-red-500 text-white rounded">{error}</div>}
-          {success && <div className="mb-2 p-2 bg-green-500 text-white rounded">{success}</div>}
+          {error && <div className="alert alert-error">{error}</div>}
+          {success && <div className="alert alert-success">{success}</div>}
         </div>
       )}
 
-      {/* Навігація по вкладках */}
-      <div className="border-b border-gray-700 flex-shrink-0">
-        <div className="flex overflow-x-auto px-4">
-          <button
-            className={`py-2 px-3 text-sm font-medium whitespace-nowrap ${activeTab === 'wallet' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-gray-400'}`}
-            onClick={() => setActiveTab('wallet')}
-          >
-            Гаманець
-          </button>
-          <button
-            className={`py-2 px-3 text-sm font-medium whitespace-nowrap ${activeTab === 'tokens' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-gray-400'}`}
-            onClick={() => setActiveTab('tokens')}
-          >
-            Токени
-          </button>
-          <button
-            className={`py-2 px-3 text-sm font-medium whitespace-nowrap ${activeTab === 'transactions' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-gray-400'}`}
-            onClick={() => setActiveTab('transactions')}
-          >
-            Транзакції
-          </button>
-          <button
-            className={`py-2 px-3 text-sm font-medium whitespace-nowrap ${activeTab === 'create-token' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-gray-400'}`}
-            onClick={() => setActiveTab('create-token')}
-          >
-            Створити токен
-          </button>
-          <button
-            className={`py-2 px-3 text-sm font-medium whitespace-nowrap ${activeTab === 'wallets' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-gray-400'}`}
-            onClick={() => setActiveTab('wallets')}
-          >
-            Мої гаманці
-          </button>
-        </div>
-      </div>
-
-      {/* Прокручуваний контент вкладок */}
-      <div className="flex-1 overflow-y-auto min-h-0">
+      {/* Контент вкладок */}
+      <div className="content-with-nav">
         {/* Вміст вкладки "Гаманець" */}
         {activeTab === 'wallet' && (
-          <div className="p-4">
-            <div className="mb-6 bg-gray-800 p-4 rounded">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-400">Баланс</span>
-                <button
-                  className="text-blue-400 hover:text-blue-300 text-sm"
-                  onClick={refreshBalance}
-                >
+          <div>
+            <div className="balance-card">
+              <div className="balance-header">
+                <span className="balance-label">Баланс</span>
+                <button className="refresh-link" onClick={refreshBalance}>
                   Оновити
                 </button>
               </div>
-              <div className="text-2xl font-bold mb-2">{balance} ETH</div>
+              <div className="balance-amount">{balance} ETH</div>
             </div>
 
-            <div className="mb-6 bg-gray-800 p-4 rounded">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-400">Моя адреса</span>
-                <div>
-                  <button
-                    className="text-blue-400 hover:text-blue-300 text-sm mr-2"
-                    onClick={toggleQRCode}
-                  >
+            <div className="address-card">
+              <div className="address-header">
+                <span className="balance-label">Моя адреса</span>
+                <div className="address-actions">
+                  <button className="action-link" onClick={toggleQRCode}>
                     {showQR ? 'Сховати QR' : 'Показати QR'}
                   </button>
-                  <button
-                    className="text-blue-400 hover:text-blue-300 text-sm"
-                    onClick={() => copyToClipboard(wallet.address)}
-                  >
+                  <button className="action-link" onClick={() => copyToClipboard(wallet.address)}>
                     Копіювати
                   </button>
                 </div>
               </div>
-              <div className="mb-3 break-all">{wallet.address}</div>
+              <div className="address-text">{wallet.address}</div>
               
               {showQR && (
-                <div className="flex justify-center">
-                  <QRCode value={wallet.address} size={128} bgColor="#1f2937" fgColor="#ffffff" />
+                <div className="qr-container">
+                  <QRCode value={wallet.address} size={128} />
                 </div>
               )}
             </div>
 
             {!showSend ? (
-              <button
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mb-4"
-                onClick={() => setShowSend(true)}
-              >
-                Відправити ETH
-              </button>
+              <div className="action-buttons">
+                <button className="action-button" onClick={() => setShowSend(true)}>
+                  <span>↑</span>
+                  Відправити ETH
+                </button>
+              </div>
             ) : (
-              <div className="bg-gray-800 p-4 rounded mb-4">
+              <div className="address-card">
                 <h3 className="text-lg font-medium mb-3">Відправити ETH</h3>
-                <div className="mb-3">
-                  <label className="block text-sm font-medium mb-1">Адреса отримувача</label>
+                <div className="input-group">
+                  <label className="input-label">Адреса отримувача</label>
                   <input
                     type="text"
-                    className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+                    className="input-field"
                     value={recipient}
                     onChange={(e) => setRecipient(e.target.value)}
                     placeholder="0x..."
                   />
                 </div>
-                <div className="mb-3">
-                  <label className="block text-sm font-medium mb-1">Кількість ETH</label>
+                <div className="input-group">
+                  <label className="input-label">Кількість ETH</label>
                   <input
                     type="number"
                     step="0.0001"
-                    className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+                    className="input-field"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0.01"
@@ -249,14 +201,14 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                 </div>
                 <div className="flex space-x-2">
                   <button
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                    className="btn-primary flex-1"
                     onClick={handleSendTransaction}
                     disabled={isLoading}
                   >
                     {isLoading ? 'Обробка...' : 'Відправити'}
                   </button>
                   <button
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded"
+                    className="btn-secondary flex-1"
                     onClick={() => setShowSend(false)}
                     disabled={isLoading}
                   >
@@ -274,10 +226,10 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
             {!isTokenDetailView && (
               <div className="flex items-center p-4 border-b border-gray-700">
                 <button 
-                  className="text-blue-400 hover:text-blue-300 flex items-center"
+                  className="back-button"
                   onClick={() => setActiveTab('wallet')}
                 >
-                  ← <span className="ml-1">Назад</span>
+                  ← <span>Назад</span>
                 </button>
               </div>
             )}
@@ -293,10 +245,10 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
           <div>
             <div className="flex items-center p-4 border-b border-gray-700">
               <button 
-                className="text-blue-400 hover:text-blue-300 flex items-center"
+                className="back-button"
                 onClick={() => setActiveTab('wallet')}
               >
-                ← <span className="ml-1">Назад</span>
+                ← <span>Назад</span>
               </button>
             </div>
             <TransactionsTab address={wallet.address} />
@@ -308,10 +260,10 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
           <div>
             <div className="flex items-center p-4 border-b border-gray-700">
               <button 
-                className="text-blue-400 hover:text-blue-300 flex items-center"
+                className="back-button"
                 onClick={() => setActiveTab('wallet')}
               >
-                ← <span className="ml-1">Назад</span>
+                ← <span>Назад</span>
               </button>
             </div>
             <TokenCreatorTab wallet={wallet} />
@@ -323,10 +275,10 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
           <div>
             <div className="flex items-center p-4 border-b border-gray-700">
               <button 
-                className="text-blue-400 hover:text-blue-300 flex items-center"
+                className="back-button"
                 onClick={() => setActiveTab('wallet')}
               >
-                ← <span className="ml-1">Назад</span>
+                ← <span>Назад</span>
               </button>
             </div>
             <WalletsTab 
@@ -336,6 +288,59 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
           </div>
         )}
       </div>
+
+      {/* Bottom Navigation */}
+      <nav className="bottom-nav">
+        <button 
+          className={`nav-item ${activeTab === 'wallet' ? 'active' : ''}`}
+          onClick={() => setActiveTab('wallet')}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+          </svg>
+          <span>Гаманець</span>
+        </button>
+        
+        <button 
+          className={`nav-item ${activeTab === 'tokens' ? 'active' : ''}`}
+          onClick={() => setActiveTab('tokens')}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+          </svg>
+          <span>Токени</span>
+        </button>
+        
+        <button 
+          className={`nav-item ${activeTab === 'transactions' ? 'active' : ''}`}
+          onClick={() => setActiveTab('transactions')}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l3.59-3.58L17 12l-5 5z"/>
+          </svg>
+          <span>Транзакції</span>
+        </button>
+        
+        <button 
+          className={`nav-item ${activeTab === 'create-token' ? 'active' : ''}`}
+          onClick={() => setActiveTab('create-token')}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2l-5.5 9h11z M12 22l5.5-9h-11z M12 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/>
+          </svg>
+          <span>Створити</span>
+        </button>
+        
+        <button 
+          className={`nav-item ${activeTab === 'wallets' ? 'active' : ''}`}
+          onClick={() => setActiveTab('wallets')}
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+          </svg>
+          <span>Гаманці</span>
+        </button>
+      </nav>
     </div>
   );
 };

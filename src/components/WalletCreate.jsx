@@ -112,27 +112,30 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4">Збережіть вашу seed фразу</h2>
         
-        <div className="mb-4 p-2 bg-yellow-600 text-white rounded text-sm">
-          Важливо! Запишіть цю фразу в надійному місці. Це єдиний спосіб відновити доступ до вашого гаманця.
+        <div className="warning-box">
+          <p className="warning-text">
+            Важливо! Запишіть цю фразу в надійному місці. Це єдиний спосіб відновити доступ до вашого гаманця.
+          </p>
         </div>
 
-        {success && <div className="mb-4 p-2 bg-green-500 text-white rounded">{success}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
         
-        <div className="mb-4 p-3 bg-gray-800 rounded border border-gray-600">
-          <p className="break-words font-mono text-amber-400">
+        <div className="seed-phrase-box">
+          <p className="seed-phrase">
             {newWallet.mnemonic}
           </p>
         </div>
         
         <button
-          className="w-full mb-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          className="btn-primary"
           onClick={handleCopyPhrase}
         >
           Копіювати seed фразу
         </button>
         
         <button
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded"
+          className="btn-primary"
+          style={{ background: '#22c55e' }}
           onClick={handleConfirmSaved}
         >
           Я зберіг seed фразу в надійному місці
@@ -147,18 +150,18 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4">Підтвердження</h2>
         
-        <div className="mb-4 p-2 bg-gray-700 rounded">
+        <div className="mb-4 p-3 bg-gray-700 rounded">
           <p className="mb-2"><span className="text-gray-400">Назва:</span> {newWallet.name}</p>
           <p className="mb-2"><span className="text-gray-400">Адреса:</span></p>
-          <p className="font-mono break-all">{newWallet.address}</p>
+          <p className="font-mono text-sm break-all">{newWallet.address}</p>
         </div>
         
-        <div className="mb-6 p-2 bg-green-800 text-white rounded">
+        <div className="alert alert-success mb-4">
           Ваш гаманець готовий до використання! Переконайтеся, що ви зберегли seed фразу.
         </div>
         
         <button
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          className="btn-primary"
           onClick={handleFinishCreation}
         >
           Завершити налаштування
@@ -169,34 +172,34 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
 
   return (
     <div className="p-4">
-      <div className="mb-4 flex rounded-md overflow-hidden border border-gray-600">
+      <div className="create-tabs">
         <button
-          className={`flex-1 py-2 px-4 ${tab === 'create' ? 'bg-blue-600' : 'bg-gray-800'}`}
+          className={`create-tab ${tab === 'create' ? 'active' : ''}`}
           onClick={() => setTab('create')}
         >
           Створити
         </button>
         <button
-          className={`flex-1 py-2 px-4 ${tab === 'privateKey' ? 'bg-blue-600' : 'bg-gray-800'}`}
+          className={`create-tab ${tab === 'privateKey' ? 'active' : ''}`}
           onClick={() => setTab('privateKey')}
         >
           Приватний ключ
         </button>
         <button
-          className={`flex-1 py-2 px-4 ${tab === 'mnemonic' ? 'bg-blue-600' : 'bg-gray-800'}`}
+          className={`create-tab ${tab === 'mnemonic' ? 'active' : ''}`}
           onClick={() => setTab('mnemonic')}
         >
           Фраза
         </button>
       </div>
 
-      {error && <div className="mb-4 p-2 bg-red-500 text-white rounded">{error}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Назва гаманця</label>
+      <div className="input-group">
+        <label className="input-label">Назва гаманця</label>
         <input
           type="text"
-          className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+          className="input-field"
           value={walletName}
           onChange={(e) => setWalletName(e.target.value)}
           placeholder="Введіть назву гаманця"
@@ -205,22 +208,22 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
 
       {isNewPassword && (
         <>
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Пароль</label>
+          <div className="input-group">
+            <label className="input-label">Пароль</label>
             <input
               type="password"
-              className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+              className="input-field"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Введіть пароль"
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Підтвердження паролю</label>
+          <div className="input-group">
+            <label className="input-label">Підтвердження паролю</label>
             <input
               type="password"
-              className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+              className="input-field"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Підтвердіть пароль"
@@ -230,11 +233,11 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
       )}
 
       {tab === 'privateKey' && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Приватний ключ</label>
+        <div className="input-group">
+          <label className="input-label">Приватний ключ</label>
           <input
             type="text"
-            className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+            className="input-field"
             value={privateKey}
             onChange={(e) => setPrivateKey(e.target.value)}
             placeholder="Введіть приватний ключ"
@@ -243,10 +246,10 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
       )}
 
       {tab === 'mnemonic' && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Мнемонічна фраза</label>
+        <div className="input-group">
+          <label className="input-label">Мнемонічна фраза</label>
           <textarea
-            className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+            className="input-field"
             value={mnemonic}
             onChange={(e) => setMnemonic(e.target.value)}
             placeholder="Введіть мнемонічну фразу з 12 слів"
@@ -256,7 +259,7 @@ const WalletCreate = ({ onWalletCreated, password, isNewPassword = true }) => {
       )}
 
       <button
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+        className="btn-primary"
         onClick={tab === 'create' ? handleCreateWallet : handleImportWallet}
       >
         {tab === 'create' ? 'Створити гаманець' : 'Імпортувати гаманець'}
