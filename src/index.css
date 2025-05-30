@@ -17,6 +17,16 @@
   --danger: #ef4444;
 }
 
+/* Приховування скролбарів */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
 /* Оновлення базових стилів */
 * {
   scrollbar-width: thin;
@@ -167,7 +177,7 @@ html, body {
 }
 
 .input-field {
-  width: 100%;
+  width: 89%;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
