@@ -71,14 +71,14 @@ const WalletsTab = ({ onCreateNewWallet, onSwitchWallet }) => {
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-};
+  };
 
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-medium">Мої гаманці</h2>
         <button
-          className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
+          className="btn-small"
           onClick={onCreateNewWallet}
         >
           Створити новий
@@ -86,33 +86,35 @@ const WalletsTab = ({ onCreateNewWallet, onSwitchWallet }) => {
       </div>
 
       {wallets.length === 0 ? (
-        <div className="text-center py-8 text-gray-400">
-          У вас ще немає гаманців
+        <div className="empty-state">
+          <p>У вас ще немає гаманців</p>
         </div>
       ) : (
         <div className="space-y-3">
           {wallets.map((wallet) => (
             <div 
               key={wallet.id} 
-              className={`p-3 rounded border ${currentWalletId === wallet.id ? 'bg-blue-900 border-blue-600' : 'bg-gray-800 border-gray-700'}`}
+              className={`wallet-list-item ${currentWalletId === wallet.id ? 'active' : ''}`}
             >
               {editingWalletId === wallet.id ? (
                 <div className="flex items-center mb-2">
                   <input
                     type="text"
-                    className="flex-1 bg-gray-700 border border-gray-600 rounded p-1 mr-2"
+                    className="flex-1 input-field mr-2"
                     value={newWalletName}
                     onChange={(e) => setNewWalletName(e.target.value)}
                     autoFocus
                   />
                   <button
-                    className="bg-green-600 hover:bg-green-700 text-white p-1 rounded mr-1"
+                    className="btn-small mr-1"
+                    style={{ padding: '8px 12px' }}
                     onClick={saveWalletName}
                   >
                     💾
                   </button>
                   <button
-                    className="bg-gray-600 hover:bg-gray-700 text-white p-1 rounded"
+                    className="btn-secondary"
+                    style={{ width: 'auto', padding: '8px 12px' }}
                     onClick={cancelEdit}
                   >
                     ✖️
@@ -123,16 +125,17 @@ const WalletsTab = ({ onCreateNewWallet, onSwitchWallet }) => {
                   <div className="font-medium">{wallet.name}</div>
                   <div className="flex space-x-1">
                     <button
-                      className="text-gray-400 hover:text-white p-1"
+                      className="action-link p-1"
                       onClick={() => handleRenameWallet(wallet.id)}
                       title="Перейменувати"
                     >
                       ✏️
                     </button>
                     <button
-                      className="text-gray-400 hover:text-red-500 p-1"
+                      className="action-link p-1"
                       onClick={() => promptDeleteWallet(wallet.id)}
                       title="Видалити"
+                      style={{ color: '#ef4444' }}
                     >
                       🗑️
                     </button>
@@ -149,7 +152,7 @@ const WalletsTab = ({ onCreateNewWallet, onSwitchWallet }) => {
 
               {currentWalletId !== wallet.id && (
                 <button
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
+                  className="btn-primary"
                   onClick={() => handleSwitchWallet(wallet.id)}
                 >
                   Перейти до гаманця
@@ -157,17 +160,18 @@ const WalletsTab = ({ onCreateNewWallet, onSwitchWallet }) => {
               )}
 
               {confirmDelete === wallet.id && (
-                <div className="mt-2 p-2 bg-red-900 rounded border border-red-700">
-                  <p className="text-sm text-white mb-2">Ви впевнені, що хочете видалити цей гаманець?</p>
+                <div className="mt-2 p-3 warning-box">
+                  <p className="warning-text mb-2">Ви впевнені, що хочете видалити цей гаманець?</p>
                   <div className="flex space-x-2">
                     <button
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded text-sm"
+                      className="flex-1 btn-primary"
+                      style={{ background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)' }}
                       onClick={handleDeleteWallet}
                     >
                       Так, видалити
                     </button>
                     <button
-                      className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-1 px-2 rounded text-sm"
+                      className="flex-1 btn-secondary"
                       onClick={cancelDelete}
                     >
                       Скасувати

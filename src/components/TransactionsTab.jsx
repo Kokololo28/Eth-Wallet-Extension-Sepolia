@@ -38,20 +38,20 @@ const TransactionsTab = ({ address }) => {
   const getStatusBadge = (status, errorMessage) => {
     if (status === 'pending') {
       return (
-        <span className="px-2 py-1 bg-yellow-500 text-yellow-900 rounded text-xs">
+        <span className="transaction-status status-pending">
           В обробці
         </span>
       );
     } else if (status === 'success') {
       return (
-        <span className="px-2 py-1 bg-green-500 text-green-900 rounded text-xs">
+        <span className="transaction-status status-success">
           Успішно
         </span>
       );
     } else {
       return (
         <div>
-          <span className="px-2 py-1 bg-red-500 text-red-900 rounded text-xs">
+          <span className="transaction-status status-failed">
             Не вдалося
           </span>
           {errorMessage && (
@@ -64,8 +64,8 @@ const TransactionsTab = ({ address }) => {
 
   if (isLoading && transactions.length === 0) {
     return (
-      <div className="flex justify-center items-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="loading-spinner">
+        <div className="spinner"></div>
       </div>
     );
   }
@@ -75,17 +75,17 @@ const TransactionsTab = ({ address }) => {
       <h2 className="text-lg font-medium mb-4">Історія транзакцій</h2>
 
       {transactions.length === 0 ? (
-        <div className="text-center py-8 text-gray-400">
-          У вас ще немає транзакцій
+        <div className="empty-state">
+          <p>У вас ще немає транзакцій</p>
         </div>
       ) : (
         <div className="space-y-3">
           {transactions.map((tx) => (
-            <div key={tx.hash} className="p-3 bg-gray-800 rounded border border-gray-700">
-              <div className="flex justify-between items-start mb-2">
+            <div key={tx.hash} className="transaction-item">
+              <div className="transaction-header">
                 <div>
-                  <div className="font-medium">{parseFloat(tx.value).toFixed(6)} ETH</div>
-                  <div className="text-sm text-gray-400">
+                  <div className="transaction-amount">{parseFloat(tx.value).toFixed(6)} ETH</div>
+                  <div className="transaction-details">
                     {address.toLowerCase() === tx.from.toLowerCase() ? 'Відправлено на ' : 'Отримано від '}
                     {truncateAddress(address.toLowerCase() === tx.from.toLowerCase() ? tx.to : tx.from)}
                   </div>
@@ -94,11 +94,9 @@ const TransactionsTab = ({ address }) => {
                   {getStatusBadge(tx.status, tx.errorMessage)}
                 </div>
               </div>
-              <div className="flex justify-between text-xs text-gray-400">
-                <div>{formatDate(tx.timestamp)}</div>
-                <div className="truncate" style={{ maxWidth: '120px' }}>
-                  {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
-                </div>
+              <div className="transaction-details">
+                {formatDate(tx.timestamp)}<br/>
+                {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
               </div>
             </div>
           ))}

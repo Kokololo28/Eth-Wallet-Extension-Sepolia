@@ -82,23 +82,23 @@ const TokenCreatorTab = ({ wallet }) => {
     <div className="p-4">
       <h2 className="text-lg font-medium mb-4">Створення власного токену</h2>
       
-      {error && <div className="mb-4 p-2 bg-red-500 text-white rounded">{error}</div>}
-      {success && <div className="mb-4 p-2 bg-green-500 text-white rounded">{success}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
       {/* Форма для створення токена */}
       {!generatedCode ? (
         <>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Тип токену</label>
-            <div className="flex rounded-md overflow-hidden border border-gray-600">
+            <label className="input-label">Тип токену</label>
+            <div className="create-tabs">
               <button
-                className={`flex-1 py-2 px-4 ${tokenType === 'erc20' ? 'bg-blue-600' : 'bg-gray-800'}`}
+                className={`create-tab ${tokenType === 'erc20' ? 'active' : ''}`}
                 onClick={() => setTokenType('erc20')}
               >
                 ERC-20 (Стандартний)
               </button>
               <button
-                className={`flex-1 py-2 px-4 ${tokenType === 'erc721' ? 'bg-blue-600' : 'bg-gray-800'}`}
+                className={`create-tab ${tokenType === 'erc721' ? 'active' : ''}`}
                 onClick={() => setTokenType('erc721')}
               >
                 ERC-721 (NFT)
@@ -106,22 +106,22 @@ const TokenCreatorTab = ({ wallet }) => {
             </div>
           </div>
           
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Назва токену</label>
+          <div className="input-group">
+            <label className="input-label">Назва токену</label>
             <input
               type="text"
-              className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+              className="input-field"
               value={tokenName}
               onChange={(e) => setTokenName(e.target.value)}
               placeholder="Наприклад: My Test Token"
             />
           </div>
           
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Символ токену</label>
+          <div className="input-group">
+            <label className="input-label">Символ токену</label>
             <input
               type="text"
-              className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+              className="input-field"
               value={tokenSymbol}
               onChange={(e) => setTokenSymbol(e.target.value)}
               placeholder="Наприклад: MTK"
@@ -129,11 +129,11 @@ const TokenCreatorTab = ({ wallet }) => {
           </div>
           
           {tokenType === 'erc20' && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Загальна кількість токенів</label>
+            <div className="input-group">
+              <label className="input-label">Загальна кількість токенів</label>
               <input
                 type="number"
-                className="w-full bg-gray-700 border border-gray-600 rounded p-2"
+                className="input-field"
                 value={totalSupply}
                 onChange={(e) => setTotalSupply(e.target.value)}
                 placeholder="Наприклад: 1000000"
@@ -145,7 +145,7 @@ const TokenCreatorTab = ({ wallet }) => {
           )}
           
           <button
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mb-4"
+            className="btn-primary"
             onClick={generateToken}
             disabled={isLoading}
           >
@@ -157,49 +157,49 @@ const TokenCreatorTab = ({ wallet }) => {
         <>
           <div className="mb-4 flex justify-between">
             <button
-              className="bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded text-sm"
+              className="btn-secondary"
               onClick={() => setGeneratedCode('')}
+              style={{ width: 'auto', padding: '8px 16px' }}
             >
               ← Повернутися до форми
             </button>
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
+              className="btn-small"
               onClick={() => copyToClipboard(generatedCode)}
             >
               Копіювати код
             </button>
           </div>
           
-          {/* Вікно з кодом - з фіксованою висотою та прокруткою */}
+          {/* Вікно з кодом */}
           <div className="mb-4">
             <h3 className="text-md font-medium mb-2">Згенерований код контракту:</h3>
-            <div className="bg-gray-800 rounded border border-gray-700">
-              <div className="h-48 overflow-y-auto p-3">
-                <pre className="text-xs whitespace-pre-wrap">
-                  {generatedCode}
-                </pre>
-              </div>
+            <div className="code-box">
+              <pre>
+                {generatedCode}
+              </pre>
             </div>
           </div>
           
           {/* Блок для кнопок */}
           <div className="mb-4">
             <h3 className="text-md font-medium mb-2">Наступні кроки:</h3>
-            <div className="bg-yellow-800 p-3 rounded border border-yellow-700">
-              <p className="text-sm text-yellow-200 mb-3">
+            <div className="warning-box">
+              <p className="warning-text">
                 Для розгортання контракту в тестовій мережі Sepolia, скопіюйте код вище і відкрийте Remix IDE, де ви зможете скомпілювати та розгорнути свій токен.
               </p>
-              <button
-                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded"
-                onClick={openRemix}
-              >
-                Відкрити Remix IDE
-              </button>
             </div>
+            <button
+              className="btn-primary"
+              onClick={openRemix}
+              style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)' }}
+            >
+              Відкрити Remix IDE
+            </button>
           </div>
           
-          {/* Додаткові інструкції - згорнуті за замовчуванням */}
-          <div className="bg-gray-800 p-3 rounded">
+          {/* Додаткові інструкції */}
+          <div className="address-card">
             <details>
               <summary className="cursor-pointer font-medium mb-2">Покрокові інструкції з розгортання</summary>
               <div className="mt-3">

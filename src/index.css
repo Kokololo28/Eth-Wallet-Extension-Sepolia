@@ -871,3 +871,109 @@ html, body {
 .gap-4 {
   gap: 16px;
 }
+
+/* Додаткові стилі для списків */
+.space-y-2 > * + * {
+  margin-top: 8px;
+}
+
+.space-y-3 > * + * {
+  margin-top: 12px;
+}
+
+/* Стилі для details */
+details summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+details[open] summary {
+  margin-bottom: 8px;
+}
+
+/* Стилі для списків */
+ol, ul {
+  margin: 0;
+  padding: 0;
+}
+
+.list-decimal {
+  list-style-type: decimal;
+}
+
+.ml-5 {
+  margin-left: 20px;
+}
+
+/* Стилі для тексту */
+.text-xs {
+  font-size: 12px;
+}
+
+.text-red-400 {
+  color: #f87171;
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+.text-gray-300 {
+  color: #d1d5db;
+}
+
+/* Стилі для padding */
+.p-1 {
+  padding: 4px;
+}
+
+.p-3 {
+  padding: 12px;
+}
+
+.py-4 {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.pt-3 {
+  padding-top: 12px;
+}
+
+.ml-2 {
+  margin-left: 8px;
+}
+
+.mt-1 {
+  margin-top: 4px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+.mr-1 {
+  margin-right: 4px;
+}
+
+.mr-2 {
+  margin-right: 8px;
+}
+
+/* Cursor pointer */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Width utilities */
+.w-full {
+  width: 100%;
+}
