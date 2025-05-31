@@ -193,7 +193,7 @@ const TokensTab = ({ address, onTokenDetailView }) => {
             <label className="input-label">Адреса токену</label>
             <input
               type="text"
-              className="input-field"
+              className="input-field2"
               value={newTokenAddress}
               onChange={(e) => setNewTokenAddress(e.target.value)}
               placeholder="0x..."

@@ -35,6 +35,20 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
     }
   }, [wallet?.address]);
 
+  // Закриття dropdown при кліку поза ним
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showTokenSelect && !event.target.closest('.relative')) {
+        setShowTokenSelect(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showTokenSelect]);
+
   const loadWalletData = async () => {
     setIsLoading(true);
     try {
@@ -227,12 +241,12 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
             </div>
 
             {!showSend ? (
-              <div className="action-buttons">
-                <button className="action-button" onClick={() => {
+              <div className="address-card2">
+                <button className="btn-primary" onClick={() => {
                   setShowSend(true);
                   loadTokens(); // Перезавантажуємо токени при відкритті
                 }}>
-                  <span>↑</span>
+                  <span style={{ marginRight: '8px' }}>↑</span>
                     Відправити
                   </button>
               </div>
@@ -254,22 +268,22 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                     </button>
                     
                     {showTokenSelect && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
+                      <div className="token-select-dropdown">
                         <button
-                          className="w-full text-left px-4 py-2 hover:bg-gray-700 flex justify-between items-center"
+                          className="token-select-item"
                           onClick={() => handleTokenSelect('ETH')}
                         >
                           <span>ETH</span>
-                          <span className="text-gray-400">{balance}</span>
+                          <span>{parseFloat(balance).toFixed(4)}</span>
                         </button>
                         {tokens.map((token) => (
                           <button
                             key={token.address}
-                            className="w-full text-left px-4 py-2 hover:bg-gray-700 flex justify-between items-center"
+                            className="token-select-item"
                             onClick={() => handleTokenSelect(token.symbol)}
                           >
                             <span>{token.symbol}</span>
-                            <span className="text-gray-400">{parseFloat(token.balance).toFixed(4)}</span>
+                            <span>{parseFloat(token.balance).toFixed(4)}</span>
                           </button>
                         ))}
                       </div>
