@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AnimatedLogo from './AnimatedLogo';
 import { loadCurrentWallet, getWalletsList, getCurrentWalletId } from '../services/storage';
 
 const WalletLogin = ({ onLogin, onCreateNew }) => {
@@ -29,9 +30,7 @@ const WalletLogin = ({ onLogin, onCreateNew }) => {
   return (
     <div className="login-container">
       <div className="logo-section">
-        <div className="logo-circle">
-          <span>Z</span>
-        </div>
+        <AnimatedLogo />
         <div className="text-center">
           <p className="text-gray-400 text-base mb-2">Ласкаво просимо!</p>
           <p className="text-gray-500 text-sm">
