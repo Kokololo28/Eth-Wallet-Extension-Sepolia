@@ -19,12 +19,12 @@
 
 /* Приховування скролбарів */
 * {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
 }
 
 *::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none !important; /* Chrome, Safari and Opera */
 }
 
 /* Оновлення базових стилів */
@@ -617,6 +617,7 @@ html, body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  margin-bottom: 12px;
 }
 
 .btn-small:hover {
@@ -1136,4 +1137,75 @@ ol, ul {
 .action-button-full:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(243, 115, 53, 0.3);
+}
+
+/* Кастомні стилі для input[type="number"] */
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  appearance: textfield; /* Стандартна властивість */
+  position: relative;
+}
+
+/* Приховуємо стандартні стрілочки */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Контейнер для кастомних стрілочок */
+.number-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.number-input-wrapper input {
+  padding-right: 40px; /* Місце для стрілочок */
+}
+
+/* Кастомні стрілочки */
+.number-arrows {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  bottom: 1px;
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-tertiary);
+  border-radius: 0 7px 7px 0;
+  overflow: hidden;
+}
+
+.number-arrow {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.number-arrow:hover {
+  background: var(--orange-primary);
+  color: white;
+}
+
+.number-arrow:active {
+  background: var(--orange-secondary);
+}
+
+.number-arrow svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.number-arrow:first-child {
+  border-bottom: 1px solid var(--border-color);
 }

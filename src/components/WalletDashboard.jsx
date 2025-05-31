@@ -216,7 +216,7 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                   Оновити
                 </button>
               </div>
-              <div className="balance-amount">{balance} ETH</div>
+              <div className="balance-amount">{parseFloat(balance).toFixed(8)} ETH</div>
             </div>
 
             <div className="address-card">
@@ -307,14 +307,44 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                 
                 <div className="input-group">
                   <label className="input-label">Кількість {selectedToken}</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    className="input-field"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.01"
-                  />
+                  <div className="number-input-wrapper">
+                    <input
+                      type="number"
+                      step="0.0001"
+                      className="input-field"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0.01"
+                    />
+                    <div className="number-arrows">
+                      <button
+                        type="button"
+                        className="number-arrow"
+                        onClick={() => {
+                          const currentAmount = parseFloat(amount) || 0;
+                          setAmount((currentAmount + 0.0001).toFixed(4));
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24">
+                          <path d="M7 14l5-5 5 5z"/>
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        className="number-arrow"
+                        onClick={() => {
+                          const currentAmount = parseFloat(amount) || 0;
+                          if (currentAmount > 0.0001) {
+                            setAmount((currentAmount - 0.0001).toFixed(4));
+                          }
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24">
+                          <path d="M7 10l5 5 5-5z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="flex space-x-2">
