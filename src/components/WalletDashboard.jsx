@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getBalance, sendTransaction } from '../services/web3';
+import { getBalance, sendTransaction, getAllTokensForAddress, sendTokenTransaction } from '../services/web3';
 import { loadCurrentWallet, loadWallet, getCurrentWalletId } from '../services/storage';
 import QRCode from 'react-qr-code';
 import TokensTab from './TokensTab';
@@ -19,10 +19,21 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('wallet'); 
   const [isTokenDetailView, setIsTokenDetailView] = useState(false);
+  
+  // Нові стани для токенів
+  const [tokens, setTokens] = useState([]);
+  const [selectedToken, setSelectedToken] = useState('ETH');
+  const [showTokenSelect, setShowTokenSelect] = useState(false);
 
   useEffect(() => {
     loadWalletData();
   }, [password]);
+
+  useEffect(() => {
+    if (wallet && wallet.address) {
+      loadTokens();
+    }
+  }, [wallet?.address]);
 
   const loadWalletData = async () => {
     setIsLoading(true);
@@ -40,6 +51,19 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
     }
   };
 
+  const loadTokens = async () => {
+    if (!wallet || !wallet.address) return;
+  
+    try {
+      console.log('Завантажуємо токени для адреси:', wallet.address);
+      const tokensData = await getAllTokensForAddress(wallet.address);
+      console.log('Отримані токени:', tokensData);
+      setTokens(tokensData);
+    } catch (error) {
+      console.error('Помилка завантаження токенів:', error);
+    }
+  };
+
   const handleSwitchWallet = async (walletId) => {
     setIsLoading(true);
     try {
@@ -48,7 +72,9 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
         setWallet(data);
         const ethBalance = await getBalance(data.address);
         setBalance(ethBalance);
-        setActiveTab('wallet'); 
+        setActiveTab('wallet');
+        // Перезавантажуємо токени для нового гаманця
+        await loadTokens();
       }
     } catch (error) {
       console.error('Помилка завантаження гаманця:', error);
@@ -62,6 +88,8 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
       try {
         const ethBalance = await getBalance(wallet.address);
         setBalance(ethBalance);
+        // Оновлюємо також баланси токенів
+        await loadTokens();
       } catch (error) {
         console.error('Помилка оновлення балансу:', error);
       }
@@ -79,11 +107,28 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
     setIsLoading(true);
 
     try {
-      await sendTransaction(wallet.privateKey, recipient, amount);
-      setSuccess('Транзакція успішно відправлена!');
+      if (selectedToken === 'ETH') {
+        // Відправляємо ETH
+        await sendTransaction(wallet.privateKey, recipient, amount);
+      } else {
+        // Відправляємо токен
+        const token = tokens.find(t => t.symbol === selectedToken);
+        if (token) {
+          await sendTokenTransaction(
+            wallet.privateKey, 
+            token.address, 
+            recipient, 
+            amount,
+            token.decimals || 18
+          );
+        }
+      }
+      
+      setSuccess(`${selectedToken} успішно відправлено!`);
       setRecipient('');
       setAmount('');
       setShowSend(false);
+      setSelectedToken('ETH');
       setTimeout(refreshBalance, 2000);
     } catch (error) {
       setError('Помилка відправлення: ' + error.message);
@@ -100,6 +145,19 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
 
   const toggleQRCode = () => {
     setShowQR(!showQR);
+  };
+
+  const handleTokenSelect = (tokenSymbol) => {
+    setSelectedToken(tokenSymbol);
+    setShowTokenSelect(false);
+  };
+
+  const getSelectedTokenBalance = () => {
+    if (selectedToken === 'ETH') {
+      return balance;
+    }
+    const token = tokens.find(t => t.symbol === selectedToken);
+    return token ? token.balance : '0';
   };
 
   if (isLoading) {
@@ -170,14 +228,58 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
 
             {!showSend ? (
               <div className="action-buttons">
-                <button className="action-button" onClick={() => setShowSend(true)}>
+                <button className="action-button" onClick={() => {
+                  setShowSend(true);
+                  loadTokens(); // Перезавантажуємо токени при відкритті
+                }}>
                   <span>↑</span>
-                  Відправити ETH
-                </button>
+                    Відправити
+                  </button>
               </div>
             ) : (
               <div className="address-card">
-                <h3 className="text-lg font-medium mb-3">Відправити ETH</h3>
+                <h3 className="text-lg font-medium mb-3">Відправити</h3>
+                
+                {/* Вибір токена */}
+                <div className="input-group">
+                  <label className="input-label">Виберіть токен</label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="input-field text-left flex justify-between items-center"
+                      onClick={() => setShowTokenSelect(!showTokenSelect)}
+                    >
+                      <span>{selectedToken}</span>
+                      <span className="text-gray-400">▼</span>
+                    </button>
+                    
+                    {showTokenSelect && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
+                        <button
+                          className="w-full text-left px-4 py-2 hover:bg-gray-700 flex justify-between items-center"
+                          onClick={() => handleTokenSelect('ETH')}
+                        >
+                          <span>ETH</span>
+                          <span className="text-gray-400">{balance}</span>
+                        </button>
+                        {tokens.map((token) => (
+                          <button
+                            key={token.address}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-700 flex justify-between items-center"
+                            onClick={() => handleTokenSelect(token.symbol)}
+                          >
+                            <span>{token.symbol}</span>
+                            <span className="text-gray-400">{parseFloat(token.balance).toFixed(4)}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Доступно: {getSelectedTokenBalance()} {selectedToken}
+                  </p>
+                </div>
+                
                 <div className="input-group">
                   <label className="input-label">Адреса отримувача</label>
                   <input
@@ -188,8 +290,9 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                     placeholder="0x..."
                   />
                 </div>
+                
                 <div className="input-group">
-                  <label className="input-label">Кількість ETH</label>
+                  <label className="input-label">Кількість {selectedToken}</label>
                   <input
                     type="number"
                     step="0.0001"
@@ -199,6 +302,7 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                     placeholder="0.01"
                   />
                 </div>
+                
                 <div className="flex space-x-2">
                   <button
                     className="btn-primary flex-1"
@@ -209,7 +313,12 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                   </button>
                   <button
                     className="btn-secondary flex-1"
-                    onClick={() => setShowSend(false)}
+                    onClick={() => {
+                      setShowSend(false);
+                      setSelectedToken('ETH');
+                      setRecipient('');
+                      setAmount('');
+                    }}
                     disabled={isLoading}
                   >
                     Скасувати

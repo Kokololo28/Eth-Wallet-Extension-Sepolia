@@ -347,3 +347,40 @@ export const sendTransaction = async (privateKey, toAddress, amount) => {
     throw error;
   }
 };
+
+// Відправлення токенів ERC-20
+export const sendTokenTransaction = async (privateKey, tokenAddress, recipientAddress, amount, decimals = 18) => {
+  try {
+    const wallet = new ethers.Wallet(privateKey, provider);
+    
+    // Мінімальний ABI для transfer
+    const minABI = [
+      {
+        "constant": false,
+        "inputs": [
+          {"name": "_to", "type": "address"},
+          {"name": "_value", "type": "uint256"}
+        ],
+        "name": "transfer",
+        "outputs": [{"name": "", "type": "bool"}],
+        "type": "function"
+      }
+    ];
+    
+    const tokenContract = new ethers.Contract(tokenAddress, minABI, wallet);
+    
+    // Конвертуємо суму з урахуванням decimals
+    const value = ethers.utils.parseUnits(amount.toString(), decimals);
+    
+    // Відправляємо транзакцію
+    const tx = await tokenContract.transfer(recipientAddress, value);
+    
+    // Зберігаємо транзакцію в історію
+    saveTransaction(wallet.address, recipientAddress, amount, tx.hash);
+    
+    return tx;
+  } catch (error) {
+    console.error('Помилка відправлення токенів:', error);
+    throw error;
+  }
+};
