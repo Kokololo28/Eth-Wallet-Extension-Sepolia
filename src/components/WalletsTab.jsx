@@ -165,13 +165,14 @@ const WalletsTab = ({ onCreateNewWallet, onSwitchWallet }) => {
                   <div className="flex space-x-2">
                     <button
                       className="flex-1 btn-primary"
-                      style={{ background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)' }}
+                      style={{ background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)', marginBottom: 0 }}
                       onClick={handleDeleteWallet}
                     >
                       Так, видалити
                     </button>
                     <button
                       className="flex-1 btn-secondary"
+                      style={{ marginBottom: 0 }}
                       onClick={cancelDelete}
                     >
                       Скасувати
