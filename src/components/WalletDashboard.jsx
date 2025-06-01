@@ -133,7 +133,8 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
             token.address, 
             recipient, 
             amount,
-            token.decimals || 18
+            token.decimals || 18,
+            token.symbol
           );
         }
       }

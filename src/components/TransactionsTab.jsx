@@ -84,7 +84,7 @@ const TransactionsTab = ({ address }) => {
             <div key={tx.hash} className="transaction-item">
               <div className="transaction-header">
                 <div>
-                  <div className="transaction-amount">{parseFloat(tx.value).toFixed(6)} ETH</div>
+                  <div className="transaction-amount">{parseFloat(tx.value).toFixed(6)} {tx.tokenSymbol || 'ETH'}</div>
                   <div className="transaction-details">
                     {address.toLowerCase() === tx.from.toLowerCase() ? 'Відправлено на ' : 'Отримано від '}
                     {truncateAddress(address.toLowerCase() === tx.from.toLowerCase() ? tx.to : tx.from)}

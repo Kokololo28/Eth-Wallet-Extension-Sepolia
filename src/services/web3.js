@@ -295,7 +295,8 @@ export const getTransactionHistory = (address) => {
 };
 
 // Збереження транзакції в історію
-export const saveTransaction = (fromAddress, toAddress, amount, hash) => {
+// Збереження транзакції в історію
+export const saveTransaction = (fromAddress, toAddress, amount, hash, tokenSymbol = 'ETH', tokenAddress = null) => {
   const transactions = getTransactionHistory(fromAddress) || [];
   
   const newTx = {
@@ -304,7 +305,9 @@ export const saveTransaction = (fromAddress, toAddress, amount, hash) => {
     to: toAddress,
     value: amount,
     timestamp: Date.now(),
-    status: 'pending'
+    status: 'pending',
+    tokenSymbol: tokenSymbol,
+    tokenAddress: tokenAddress
   };
   
   transactions.unshift(newTx); // Додаємо на початок масиву
@@ -349,7 +352,7 @@ export const sendTransaction = async (privateKey, toAddress, amount) => {
 };
 
 // Відправлення токенів ERC-20
-export const sendTokenTransaction = async (privateKey, tokenAddress, recipientAddress, amount, decimals = 18) => {
+export const sendTokenTransaction = async (privateKey, tokenAddress, recipientAddress, amount, decimals = 18, tokenSymbol = 'TOKEN') => {
   try {
     const wallet = new ethers.Wallet(privateKey, provider);
     
@@ -375,8 +378,8 @@ export const sendTokenTransaction = async (privateKey, tokenAddress, recipientAd
     // Відправляємо транзакцію
     const tx = await tokenContract.transfer(recipientAddress, value);
     
-    // Зберігаємо транзакцію в історію
-    saveTransaction(wallet.address, recipientAddress, amount, tx.hash);
+    // Зберігаємо транзакцію в історію з інформацією про токен
+    saveTransaction(wallet.address, recipientAddress, amount, tx.hash, tokenSymbol, tokenAddress);
     
     return tx;
   } catch (error) {
