@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
 import WalletCreate from './components/WalletCreate';
 import WalletDashboard from './components/WalletDashboard';
 import WalletLogin from './components/WalletLogin';

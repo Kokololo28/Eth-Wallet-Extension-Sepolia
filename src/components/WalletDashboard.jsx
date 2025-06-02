@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getBalance, sendTransaction, getAllTokensForAddress, sendTokenTransaction } from '../services/web3';
-import { loadCurrentWallet, loadWallet, getCurrentWalletId } from '../services/storage';
+import { loadCurrentWallet, loadWallet } from '../services/storage';
 import QRCode from 'react-qr-code';
 import TokensTab from './TokensTab';
 import TransactionsTab from './TransactionsTab';

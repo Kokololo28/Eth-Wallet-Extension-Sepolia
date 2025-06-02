@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { getAllTokensForAddress, getTokenInfo, saveCustomToken } from '../services/web3';
-import { openTokenInExplorer, openAddressInExplorer } from '../services/web3';
+import { openTokenInExplorer } from '../services/web3';
 
 // А в компоненті TokenDetail додайте цю кнопку:
 const TokenDetail = ({ token, onBack }) => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AnimatedLogo from './AnimatedLogo';
-import { loadCurrentWallet, getWalletsList, getCurrentWalletId } from '../services/storage';
+import { loadCurrentWallet, getWalletsList } from '../services/storage';
 
 const WalletLogin = ({ onLogin, onCreateNew }) => {
   const [password, setPassword] = useState('');
