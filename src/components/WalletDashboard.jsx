@@ -6,7 +6,6 @@ import TokensTab from './TokensTab';
 import TransactionsTab from './TransactionsTab';
 import WalletsTab from './WalletsTab';
 import TokenCreatorTab from './TokenCreatorTab';
-import { openAddressInExplorer } from '../services/web3';
 
 const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
   const [wallet, setWallet] = useState(null);
@@ -230,13 +229,6 @@ const WalletDashboard = ({ password, onLogout, onCreateNewWallet }) => {
                   </button>
                   <button className="action-link" onClick={() => copyToClipboard(wallet.address)}>
                     Копіювати
-                  </button>
-                  <button
-                    className="action-link"
-                    onClick={() => openAddressInExplorer(wallet.address)}
-                    title="Переглянути адресу в Block Explorer"
-                  >
-                    Explorer
                   </button>
                 </div>
               </div>
