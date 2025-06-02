@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getTransactionHistory } from '../services/web3';
+import { getTransactionHistory, openTransactionInExplorer, isValidTxHash } from '../services/web3';
 
 const TransactionsTab = ({ address }) => {
   const [transactions, setTransactions] = useState([]);
@@ -33,6 +33,20 @@ const TransactionsTab = ({ address }) => {
   const truncateAddress = (addr) => {
     if (!addr) return '';
     return addr.slice(0, 6) + '...' + addr.slice(-4);
+  };
+
+  const truncateHash = (hash) => {
+    if (!hash) return '';
+    return hash.slice(0, 8) + '...' + hash.slice(-6);
+  };
+
+  // Функція для відкриття транзакції в Block Explorer використовує сервіс
+  const handleOpenInExplorer = (txHash) => {
+    if (isValidTxHash(txHash)) {
+      openTransactionInExplorer(txHash);
+    } else {
+      console.error('Невалідний хеш транзакції:', txHash);
+    }
   };
 
   const getStatusBadge = (status, errorMessage) => {
@@ -94,10 +108,35 @@ const TransactionsTab = ({ address }) => {
                   {getStatusBadge(tx.status, tx.errorMessage)}
                 </div>
               </div>
-              <div className="transaction-details">
+              
+              <div className="transaction-details mb-3">
                 {formatDate(tx.timestamp)}<br/>
-                {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
+                <span className="font-mono">{truncateHash(tx.hash)}</span>
               </div>
+
+              {/* Кнопка Block Explorer */}
+              {tx.hash && isValidTxHash(tx.hash) && (
+                <div className="transaction-actions">
+                  <button
+                    className="block-explorer-btn"
+                    onClick={() => handleOpenInExplorer(tx.hash)}
+                    title="Переглянути в Sepolia Etherscan"
+                  >
+                    <svg 
+                      viewBox="0 0 24 24" 
+                      className="block-explorer-icon"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15,3 21,3 21,9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                    View on Block Explorer
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

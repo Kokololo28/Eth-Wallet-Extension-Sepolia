@@ -387,3 +387,78 @@ export const sendTokenTransaction = async (privateKey, tokenAddress, recipientAd
     throw error;
   }
 };
+
+// Додайте цю функцію в кінець вашого файлу src/services/web3.js
+
+// Конфігурація Block Explorer для різних мереж
+const BLOCK_EXPLORERS = {
+  sepolia: {
+    name: 'Sepolia Etherscan',
+    baseUrl: 'https://sepolia.etherscan.io',
+    txPath: '/tx/',
+    addressPath: '/address/',
+    tokenPath: '/token/'
+  },
+  goerli: {
+    name: 'Goerli Etherscan',
+    baseUrl: 'https://goerli.etherscan.io',
+    txPath: '/tx/',
+    addressPath: '/address/',
+    tokenPath: '/token/'
+  },
+  mainnet: {
+    name: 'Etherscan',
+    baseUrl: 'https://etherscan.io',
+    txPath: '/tx/',
+    addressPath: '/address/',
+    tokenPath: '/token/'
+  }
+};
+
+// Отримання поточної мережі (базується на NETWORK константі)
+export const getCurrentBlockExplorer = () => {
+  return BLOCK_EXPLORERS[NETWORK] || BLOCK_EXPLORERS.sepolia;
+};
+
+// Відкриття транзакції в Block Explorer
+export const openTransactionInExplorer = (txHash) => {
+  const explorer = getCurrentBlockExplorer();
+  const url = `${explorer.baseUrl}${explorer.txPath}${txHash}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+// Відкриття адреси в Block Explorer
+export const openAddressInExplorer = (address) => {
+  const explorer = getCurrentBlockExplorer();
+  const url = `${explorer.baseUrl}${explorer.addressPath}${address}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+// Відкриття токена в Block Explorer
+export const openTokenInExplorer = (tokenAddress) => {
+  const explorer = getCurrentBlockExplorer();
+  const url = `${explorer.baseUrl}${explorer.tokenPath}${tokenAddress}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+// Отримання URL для різних типів даних
+export const getExplorerUrl = (type, data) => {
+  const explorer = getCurrentBlockExplorer();
+  
+  switch (type) {
+    case 'tx':
+    case 'transaction':
+      return `${explorer.baseUrl}${explorer.txPath}${data}`;
+    case 'address':
+      return `${explorer.baseUrl}${explorer.addressPath}${data}`;
+    case 'token':
+      return `${explorer.baseUrl}${explorer.tokenPath}${data}`;
+    default:
+      return explorer.baseUrl;
+  }
+};
+
+// Перевірка чи транзакція валідна для перегляду
+export const isValidTxHash = (hash) => {
+  return hash && hash.length === 66 && hash.startsWith('0x');
+};

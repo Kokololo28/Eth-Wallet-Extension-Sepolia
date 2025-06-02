@@ -1255,3 +1255,95 @@ input[type="number"]::-webkit-outer-spin-button {
   animation: particleGlow 3s ease-in-out infinite;
   animation-delay: calc(var(--particle-index) * 0.1s);
 }
+
+/* Block Explorer Button Styles */
+.transaction-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.block-explorer-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(246, 133, 27, 0.1);
+  color: var(--orange-primary);
+  border: 1px solid rgba(246, 133, 27, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  width: auto;
+  margin: 0;
+}
+
+.block-explorer-btn:hover {
+  background: rgba(246, 133, 27, 0.2);
+  border-color: var(--orange-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(246, 133, 27, 0.2);
+}
+
+.block-explorer-btn:active {
+  transform: translateY(0);
+}
+
+.block-explorer-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 360px) {
+  .block-explorer-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  
+  .block-explorer-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Additional transaction item improvements */
+.transaction-item {
+  position: relative;
+}
+
+.transaction-details .font-mono {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Flex layout for buttons */
+.btn-explorer-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(246, 133, 27, 0.1);
+  color: var(--orange-primary);
+  border: 1px solid rgba(246, 133, 27, 0.3);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  flex: 1;
+  margin: 0;
+}
+
+.btn-explorer-flex:hover {
+  background: rgba(246, 133, 27, 0.2);
+  border-color: var(--orange-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(246, 133, 27, 0.2);
+}
