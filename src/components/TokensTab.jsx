@@ -61,13 +61,6 @@ const TokenDetail = ({ token, onBack }) => {
           </button>
         </div>
       </div>
-      
-      <div className="address-card mt-4">
-        <h3 className="text-sm font-medium mb-2 text-gray-400">Транзакції з токеном</h3>
-        <div className="empty-state py-4">
-          <p>Історія транзакцій з цим токеном буде доступна пізніше</p>
-        </div>
-      </div>
     </div>
   );
 };
