@@ -1,0 +1,233 @@
+@startuml ZeroTrace Wallet Architecture
+
+!theme plain
+skinparam backgroundColor #f8f9fa
+skinparam defaultFontSize 12
+
+skinparam package {
+  BackgroundColor #e3f2fd
+  BorderColor #1976d2
+  FontStyle bold
+}
+
+skinparam class {
+  BackgroundColor #ffffff
+  BorderColor #424242
+  ArrowColor #1976d2
+  FontSize 11
+}
+
+package "🎨 React Components" as Components {
+  
+  class App {
+    - page: string
+    - password: string
+    - passwordVerified: boolean
+    --
+    + handleWalletCreated()
+    + handleLogin()
+    + handleLogout()
+    + handleCreateNewWallet()
+  }
+  
+  class WalletDashboard {
+    - wallet: object
+    - balance: string
+    - activeTab: string
+    - tokens: array[]
+    - selectedToken: string
+    --
+    + loadWalletData()
+    + refreshBalance()
+    + handleSendTransaction()
+    + handleSwitchWallet()
+  }
+  
+  class WalletCreate {
+    - tab: string
+    - newWallet: object
+    - phraseConfirmed: boolean
+    - walletName: string
+    --
+    + handleCreateWallet()
+    + handleImportWallet()
+    + handleCopyPhrase()
+  }
+  
+  class WalletLogin {
+    - password: string
+    - error: string
+    --
+    + handleLogin()
+    + handleKeyPress()
+  }
+  
+  class TokensTab {
+    - tokens: array[]
+    - selectedToken: object
+    - showAddToken: boolean
+    --
+    + loadTokens()
+    + handleAddToken()
+    + handleTokenClick()
+  }
+  
+  class TransactionsTab {
+    - transactions: array[]
+    - isLoading: boolean
+    --
+    + loadTransactions()
+    + handleOpenInExplorer()
+  }
+  
+  class WalletsTab {
+    - wallets: array[]
+    - editingWalletId: string
+    --
+    + handleSwitchWallet()
+    + handleRenameWallet()
+    + handleDeleteWallet()
+  }
+  
+  class TokenCreatorTab {
+    - tokenType: string
+    - tokenName: string
+    - generatedCode: string
+    --
+    + generateToken()
+    + copyToClipboard()
+  }
+}
+
+package "⚙️ Services Layer" as Services {
+  
+  class Web3Service {
+    + createWallet()
+    + importWalletFromPrivateKey()
+    + importWalletFromMnemonic()
+    + getBalance()
+    + sendTransaction()
+    + sendTokenTransaction()
+    + getTokenBalance()
+    + getAllTokensForAddress()
+    + getTokenInfo()
+    + saveCustomToken()
+    + openTransactionInExplorer()
+  }
+  
+  class StorageService {
+    + saveWallet()
+    + loadWallet()
+    + loadCurrentWallet()
+    + getWalletsList()
+    + setCurrentWallet()
+    + renameWallet()
+    + deleteWallet()
+    + isPasswordSet()
+    + saveSettings()
+    + loadSettings()
+  }
+  
+  class ContractService {
+    + deployERC20Token()
+    + createContractInstance()
+    + getSignedContract()
+    + callContractRead()
+    + callContractWrite()
+    + ERC20_TOKEN_TEMPLATE
+    + ERC721_TOKEN_TEMPLATE
+  }
+}
+
+package "🔐 Security & Storage" as Security {
+  
+  class CryptoJS {
+    + AES.encrypt()
+    + AES.decrypt()
+    + password_protection
+  }
+  
+  class LocalStorage {
+    + ethereum_wallets_list
+    + wallet_password_set
+    + custom_tokens
+    + transactions_history
+  }
+}
+
+package "🌐 External APIs" as External {
+  
+  class InfuraAPI {
+    + JsonRpcProvider
+    + Sepolia Network
+    + API_KEY: string
+  }
+  
+  class EthereumBlockchain {
+    + Smart Contracts
+    + Transactions
+    + ERC-20 Tokens
+    + ERC-721 NFTs
+  }
+  
+  class EtherscanAPI {
+    + Block Explorer
+    + Transaction Details
+    + sepolia.etherscan.io
+  }
+  
+  class RemixIDE {
+    + Contract Deployment
+    + Code Compilation
+    + remix.ethereum.org
+  }
+}
+
+package "📱 Browser Extension" as Extension {
+  
+  class ManifestV3 {
+    + popup: index.html
+    + permissions: storage
+    + content_security_policy
+  }
+  
+  class ViteBuild {
+    + @crxjs/vite-plugin
+    + React compilation
+    + Extension packaging
+  }
+}
+
+' Основні зв'язки
+App ||--|| WalletDashboard : navigates
+App ||--|| WalletCreate : navigates
+App ||--|| WalletLogin : navigates
+
+WalletDashboard ||--|| TokensTab : contains
+WalletDashboard ||--|| TransactionsTab : contains
+WalletDashboard ||--|| WalletsTab : contains
+WalletDashboard ||--|| TokenCreatorTab : contains
+
+' Сервіси
+WalletDashboard --> Web3Service : uses
+WalletCreate --> Web3Service : uses
+WalletCreate --> StorageService : uses
+TokensTab --> Web3Service : uses
+TransactionsTab --> Web3Service : uses
+TokenCreatorTab --> ContractService : uses
+
+' Зовнішні API
+Web3Service --> InfuraAPI : connects
+Web3Service --> EthereumBlockchain : interacts
+Web3Service --> EtherscanAPI : opens
+ContractService --> RemixIDE : redirects
+
+' Безпека
+StorageService --> LocalStorage : stores
+StorageService --> CryptoJS : encrypts
+
+' Extension
+App --> ManifestV3 : runs_in
+ManifestV3 --> ViteBuild : built_by
+
+@enduml
