@@ -9,6 +9,6 @@ export default defineConfig({
     crx({ manifest })
   ],
   build: {
-    chunkSizeWarningLimit: 1000, // Збільшуємо ліміт до 1000 kB
+    chunkSizeWarningLimit: 1000,
   }
 });

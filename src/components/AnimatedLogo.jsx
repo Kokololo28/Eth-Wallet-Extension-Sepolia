@@ -93,6 +93,12 @@ const AnimatedLogo = () => {
       className="animated-logo-container"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={{
+        backgroundImage: `url('/src/assets/icon128.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
       <svg 
         width="100" 
